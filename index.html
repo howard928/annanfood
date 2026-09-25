@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>台南安南區美食小吃轉盤｜10家部落客精選</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root{--ink:#18212b;--green:#0e6a58;--orange:#ed7b38;--cream:#fff8ed;--line:#e8ddcb}
+    *{box-sizing:border-box} body{margin:0;color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;background:var(--cream)}
+    header{color:#fff;padding:52px 20px 68px;background:radial-gradient(circle at 80% 0,#f7aa59 0,transparent 28%),linear-gradient(125deg,#064d42,#0d7560)}
+    .wrap{max-width:1160px;margin:auto}.tag{display:inline-block;padding:6px 11px;border-radius:99px;background:#ffffff22;font-size:.84rem;letter-spacing:.08em}.title{font-size:clamp(2rem,5vw,3.8rem);letter-spacing:.04em;margin:14px 0 10px}.subtitle{margin:0;color:#dcefe9;line-height:1.75}
+    main{max-width:1160px;margin:-32px auto 48px;padding:0 20px}.panel{background:white;border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 30px #46361b13;padding:22px;margin-bottom:24px}
+    h2{font-size:1.35rem;margin:0 0 8px}.note{margin:0;color:#66717d;line-height:1.7;font-size:.92rem}.map-links{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.link-btn,.map-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:10px;padding:10px 13px;font-weight:700}.link-btn{background:#e9f4f1;color:#075947}.map-btn{color:#075947;background:#f3f6f5;border:1px solid #cfe0da;font-size:.88rem;white-space:nowrap}.map-btn:hover{background:#dff1eb}
+    #map{height:440px;border-radius:14px;border:1px solid var(--line);overflow:hidden}.map-loading{padding:12px;color:#63726d}
+    .grid{display:grid;grid-template-columns:minmax(280px,.9fr) minmax(0,1.2fr);gap:24px;align-items:start}.wheel-area{text-align:center;position:sticky;top:18px}.wheel-wrap{position:relative;width:min(100%,390px);margin:18px auto;z-index:0}.wheel{position:relative;width:100%;aspect-ratio:1;border-radius:50%;border:9px solid #fff;box-shadow:0 0 0 4px var(--orange),0 16px 28px #40240e25;transition:transform 4.8s cubic-bezier(.12,.72,.17,1);background:#eee;z-index:1}.pin{position:absolute;top:-17px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:45px solid var(--orange);filter:drop-shadow(0 2px 1px #7d3510);z-index:3}.hub{position:absolute;top:50%;left:50%;width:64px;height:64px;transform:translate(-50%,-50%);border-radius:50%;background:#fff;color:var(--green);font-size:1.5rem;display:grid;place-items:center;border:5px solid #f7d49c;box-shadow:0 2px 9px #3c240b40;z-index:4}.spin{cursor:pointer;border:0;border-radius:12px;padding:13px 22px;background:var(--orange);color:white;font-size:1.05rem;font-weight:800;box-shadow:0 5px 0 #b7541e}.spin:disabled{opacity:.62;cursor:wait}.result{min-height:54px;margin:18px auto 0;display:grid;place-items:center;color:#0e594b;font-weight:800;line-height:1.5}
+    .food-list{display:grid;gap:12px}.food{display:grid;grid-template-columns:48px 110px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fffdf9}.num{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#e3f2ed;color:#076451;font-weight:900}.food-thumb{width:110px;height:88px;object-fit:cover;border-radius:12px;border:1px solid #efe4d5;background:#f4efe7}.food h3{margin:0 0 5px;font-size:1.05rem}.meta{font-size:.9rem;color:#63717b;line-height:1.65}.dish{color:#985022;font-size:.9rem;font-weight:700}.rating-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:#fff2d8;color:#9a5d11;font-weight:800;font-size:.78rem;margin:4px 0 8px}.rating-badge .star{font-size:.88rem}.source{font-size:.78rem;color:#8a7766;margin-top:3px}.route-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:12px}.route-card{padding:18px 18px 16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fffdf9,#fff7ef)}.route-tag{display:inline-block;padding:6px 10px;border-radius:999px;background:#eaf7f2;color:#0a6d59;font-weight:800;font-size:.78rem;letter-spacing:.04em}.route-card h3{margin:12px 0 10px;font-size:1.08rem}.route-summary{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 12px}.route-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:#f4f8f6;border:1px solid #d7eadf;color:#0d6656;font-size:.76rem;font-weight:800}.route-card ol{margin:0;padding-left:0;list-style:none;color:#3d4954;line-height:1.9}.route-card li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:4px 0;border-bottom:1px dashed #e9dcc7}.route-card li:last-child{border-bottom:none}.route-stop{display:flex;align-items:center;gap:8px}.route-marker{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#e9f0d4;color:#547823;font-size:.8rem}.route-meta{font-size:.75rem;color:#5d6d72;white-space:nowrap}.footer{font-size:.82rem;color:#69717a;line-height:1.65;padding:0 4px}.leaflet-popup-content{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.6}.leaflet-popup-content a{color:#076451;font-weight:700}.food .map-btn{justify-self:start}
+    @media(max-width:780px){header{padding:38px 20px 58px}.grid{grid-template-columns:1fr}.wheel-area{position:static}.food{grid-template-columns:40px 1fr}.food .map-btn{grid-column:2;justify-self:start}.route-grid{grid-template-columns:1fr}#map{height:350px}}
+  </style>
+</head>
+<body>
+  <header><div class="wrap"><span class="tag">TAINAN · ANNAN FOOD GUIDE</span><h1 class="title">安南區今晚吃什麼？</h1><p class="subtitle">10 家部落客／美食媒體曾推薦的小吃口袋名單。按一下轉盤，讓它替你決定下一站。</p></div></header>
+  <main>
+    <section class="panel"><h2>安南區美食地圖</h2><p class="note">地圖會依店址自動定位；可點圖釘查看店名、招牌與導航。若地圖載入較慢，可使用下方 Google 地圖搜尋。</p><div class="map-links"><a class="link-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=%E5%8F%B0%E5%8D%97%E5%B8%82%E5%AE%89%E5%8D%97%E5%8D%80%E7%BE%8E%E9%A3%9F">在 Google 地圖開啟安南美食</a></div><div id="map"><div class="map-loading">正在定位 10 家小吃…</div></div></section>
+    <section class="panel grid">
+      <div class="wheel-area"><h2>美食命運轉盤</h2><p class="note">每次抽選會優先避開剛剛選過的店家；10 家都選過後會重新開始。</p><div class="wheel-wrap"><div class="pin"></div><canvas id="wheel" class="wheel" width="760" height="760" aria-label="安南區美食轉盤"></canvas><div class="hub">🍜</div></div><button id="spin" class="spin">按一下，幫我選！</button><div id="result" class="result">今天的選擇，交給轉盤。</div></div>
+      <div><h2>10 家精選清單</h2><p class="note">營業時間整理自美食平台／推薦報導的公開資料，可能因公休、節日或售完提早結束而調整；出發前請再電話或 Google 地圖確認。</p><div id="food-list" class="food-list" style="margin-top:14px"></div></div>
+    </section>
+    <section class="panel">
+      <h2>小吃一日遊地圖導覽</h2>
+      <p class="note">這四條路線依照安南區店家分布做順路調整，可直接當成一日遊計畫；每一站都標示起點、終點與建議停留時長。</p>
+      <div class="route-grid">
+        <article class="route-card">
+          <span class="route-tag">路線 1</span>
+          <h3>北安路順路早餐圈</h3>
+          <div class="route-header">
+            <div class="route-legend"><span class="route-point"><span class="route-dot start"></span>起點</span><span class="route-point"><span class="route-dot end"></span>終點</span></div>
+          </div>
+          <div class="route-summary">
+            <span class="route-pill">🗺️ 全程約 6.8 km</span>
+            <span class="route-pill">⏱️ 約 15 分鐘</span>
+            <span class="route-pill">💰 總消費約 NT$ 330–520</span>
+            <span class="route-pill">👥 適合 2–4 人</span>
+            <span class="route-pill">🍴 建議停留 20–30 分鐘/站</span>
+          </div>
+          <ol>
+            <li><span class="route-stop"><span class="route-marker">S</span>起點：天香抓餅</span><span class="route-meta">國安街 · 0.0 km · 20 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">2</span>台南無名紅豆餅</span><span class="route-meta">北安路三段 · 2.1 km / 6 min · 15 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">3</span>天生好味炸物</span><span class="route-meta">北安黃昏市場 · 1.0 km / 4 min · 15 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">E</span>終點：美味小籠包</span><span class="route-meta">同安路 · 2.4 km / 6 min · 20 分鐘</span></li>
+          </ol>
+        </article>
+        <article class="route-card">
+          <span class="route-tag">路線 2</span>
+          <h3>國安街古早味線</h3>
+          <div class="route-header">
+            <div class="route-legend"><span class="route-point"><span class="route-dot start"></span>起點</span><span class="route-point"><span class="route-dot end"></span>終點</span></div>
+          </div>
+          <div class="route-summary">
+            <span class="route-pill">🗺️ 全程約 7.5 km</span>
+            <span class="route-pill">⏱️ 約 18 分鐘</span>
+            <span class="route-pill">💰 總消費約 NT$ 280–460</span>
+            <span class="route-pill">👥 適合 2–5 人</span>
+            <span class="route-pill">🍴 建議停留 15–25 分鐘/站</span>
+          </div>
+          <ol>
+            <li><span class="route-stop"><span class="route-marker">S</span>起點：阿德碗稞</span><span class="route-meta">國安街56巷 · 0.0 km · 20 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">2</span>天香抓餅</span><span class="route-meta">國安街145號 · 1.4 km / 5 min · 20 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">3</span>安南20元無名肉粽</span><span class="route-meta">安和路四段 · 3.0 km / 8 min · 15 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">E</span>終點：台南無名紅豆餅</span><span class="route-meta">北安路三段 · 2.1 km / 5 min · 15 分鐘</span></li>
+          </ol>
+        </article>
+        <article class="route-card">
+          <span class="route-tag">路線 3</span>
+          <h3>海佃路晚餐順路線</h3>
+          <div class="route-header">
+            <div class="route-legend"><span class="route-point"><span class="route-dot start"></span>起點</span><span class="route-point"><span class="route-dot end"></span>終點</span></div>
+          </div>
+          <div class="route-summary">
+            <span class="route-pill">🗺️ 全程約 9.2 km</span>
+            <span class="route-pill">⏱️ 約 22 分鐘</span>
+            <span class="route-pill">💰 總消費約 NT$ 420–700</span>
+            <span class="route-pill">👥 適合 2–6 人</span>
+            <span class="route-pill">🍴 建議停留 20–35 分鐘/站</span>
+          </div>
+          <ol>
+            <li><span class="route-stop"><span class="route-marker">S</span>起點：店小二臭豆腐</span><span class="route-meta">大安街 · 0.0 km · 20 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">2</span>尚興無骨生炒鴨肉焿</span><span class="route-meta">海佃路一段 · 3.1 km / 8 min · 25 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">3</span>冠軍牛肉麵</span><span class="route-meta">本淵路 · 2.8 km / 7 min · 25 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">E</span>終點：天香抓餅</span><span class="route-meta">國安街 · 3.3 km / 9 min · 15 分鐘</span></li>
+          </ol>
+        </article>
+        <article class="route-card">
+          <span class="route-tag">路線 4</span>
+          <h3>安南市區輕鬆吃玩圈</h3>
+          <div class="route-header">
+            <div class="route-legend"><span class="route-point"><span class="route-dot start"></span>起點</span><span class="route-point"><span class="route-dot end"></span>終點</span></div>
+          </div>
+          <div class="route-summary">
+            <span class="route-pill">🗺️ 全程約 8.1 km</span>
+            <span class="route-pill">⏱️ 約 20 分鐘</span>
+            <span class="route-pill">💰 總消費約 NT$ 360–620</span>
+            <span class="route-pill">👥 適合 2–4 人</span>
+            <span class="route-pill">🍴 建議停留 15–20 分鐘/站</span>
+          </div>
+          <ol>
+            <li><span class="route-stop"><span class="route-marker">S</span>起點：阿德碗稞</span><span class="route-meta">國安街 · 0.0 km · 20 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">2</span>天香抓餅</span><span class="route-meta">國安街 · 1.2 km / 4 min · 20 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">3</span>美味小籠包</span><span class="route-meta">同安路 · 2.7 km / 7 min · 15 分鐘</span></li>
+            <li><span class="route-stop"><span class="route-marker">E</span>終點：小府城鍋燒意麵 總店</span><span class="route-meta">長和路三段 · 4.2 km / 9 min · 20 分鐘</span></li>
+          </ol>
+        </article>
+      </div>
+    </section>
+    <p class="footer">選店原則：優先採用食尚玩家、在地美食部落客報導，以及愛食記中有部落客食記推薦的安南區小吃；不以單一評分或廣告排序。資料整理日期：2026-09-25。<br>整理：趙玟豪</p>
+  </main>
+  <script>
+    const foods=[
+      {name:'天香抓餅',dish:'鮮蚵仔蔥油餅、蚵仔蛋',address:'台南市安南區國安街145號',hours:'公開資料未列完整時段，建議先電詢',phone:'06-2599299',source:'食尚玩家／在地部落客',color:'#e88948',image:'images/{FDF51860-A2E9-4D69-9137-F6326FBE9F85}.png',rating:4.9},
+      {name:'阿德碗稞',dish:'碗粿、菜粽、肉粽、魚羹',address:'台南市安南區國安街56巷45號',hours:'06:30–13:00',phone:'0902-109-575',source:'愛食記部落客推薦',color:'#4e89a1',image:'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=900&q=80',rating:4.8},
+      {name:'尚興無骨生炒鴨肉焿',dish:'無骨生炒鴨肉羹',address:'台南市安南區海佃路一段197號',hours:'11:00–14:00、17:00–21:00',source:'愛食記小吃推薦',color:'#665aa4',image:'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=80',rating:4.7},
+      {name:'小府城鍋燒意麵 總店',dish:'鍋燒意麵',address:'台南市安南區長和路三段45號',hours:'10:30–20:00',source:'愛食記小吃推薦',color:'#d05c73',image:'https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=900&q=80',rating:4.7},
+      {name:'冠軍牛肉麵',dish:'牛肉麵、小吃',address:'台南市安南區本淵路100號',hours:'09:00–20:00',source:'愛食記小吃推薦',color:'#a55b91',image:'https://images.unsplash.com/photo-1557872943-16a5ac26437e?auto=format&fit=crop&w=900&q=80',rating:4.6},
+      {name:'店小二臭豆腐',dish:'酥脆一口臭豆腐',address:'台南市安南區大安街301號',hours:'15:00–19:00',source:'在地部落客／愛食記',color:'#549b8d',image:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80',rating:4.5},
+      {name:'美味小籠包（無名小籠包）',dish:'手工小籠包',address:'台南市安南區同安路366號',hours:'05:30–10:00（售完為止）',source:'在地部落客／愛食記',color:'#7ba05b',image:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80',rating:4.5},
+      {name:'安南20元無名肉粽',dish:'古早味肉粽',address:'台南市安南區安和路四段597號',hours:'05:00–11:00',source:'愛食記小吃推薦',color:'#a9794d',image:'https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=900&q=80',rating:4.4},
+      {name:'天生好味炸物',dish:'炸雞腿、甘梅薯條與各式炸物',address:'台南市安南區北安路三段225號（北安利多黃昏市場）',hours:'依北安利多黃昏市場營業時段為主',source:'食尚玩家／在地部落客',color:'#dcb64c',image:'https://images.unsplash.com/photo-1562967916-eb82221dfb92?auto=format&fit=crop&w=900&q=80',rating:4.3},
+      {name:'台南無名紅豆餅',dish:'爆餡紅豆、奶油、芋頭車輪餅',address:'台南市安南區北安路三段258號',hours:'依北安利多黃昏市場營業時段為主',source:'食尚玩家／在地部落客',color:'#b45f47',image:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80',rating:4.2}
+    ].sort((a,b)=>b.rating-a.rating);
+    const q=a=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(a);
+    const list=document.querySelector('#food-list');
+    list.innerHTML=foods.map((f,i)=>`<article class="food"><div class="num">${i+1}</div><img class="food-thumb" src="${f.image}" alt="${f.name} 料理照片" loading="lazy"><div><h3>${f.name}</h3><div class="rating-badge"><span class="star">★</span> Google 評論 ${f.rating.toFixed(1)}</div><div class="dish">推薦：${f.dish}</div><div class="meta">📍 ${f.address}<br>🕒 ${f.hours}${f.phone?`<br>☎ ${f.phone}`:''}</div><div class="source">推薦來源：${f.source}</div></div><a class="map-btn" href="${q(f.address+' '+f.name)}" target="_blank" rel="noopener">Google 地圖</a></article>`).join('');
+    const c=document.querySelector('#wheel'),ctx=c.getContext('2d'),n=foods.length,arc=Math.PI*2/n;let angle=0,used=[],spinning=false;
+    function draw(){const r=c.width/2;ctx.clearRect(0,0,c.width,c.height);foods.forEach((f,i)=>{const start=-Math.PI/2+i*arc;ctx.beginPath();ctx.moveTo(r,r);ctx.arc(r,r,r-8,start,start+arc);ctx.closePath();ctx.fillStyle=f.color;ctx.fill();ctx.strokeStyle='#fff8ed';ctx.lineWidth=4;ctx.stroke();ctx.save();ctx.translate(r,r);ctx.rotate(start+arc/2);ctx.fillStyle='#fff';ctx.font='700 27px "Microsoft JhengHei",sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';const text=f.name.length>8?f.name.slice(0,8)+'…':f.name;ctx.fillText(text,r-48,0);ctx.restore()})};draw();
+    const spin=document.querySelector('#spin'),result=document.querySelector('#result');
+    spin.addEventListener('click',()=>{if(spinning)return;if(used.length===n)used=[];const pool=foods.map((_,i)=>i).filter(i=>!used.includes(i));const chosen=pool[Math.floor(Math.random()*pool.length)];used.push(chosen);spinning=true;spin.disabled=true;const target=-((chosen+.5)*arc);const rotations=7+Math.floor(Math.random()*3);angle+=rotations*Math.PI*2+(target-(angle%(Math.PI*2)));c.style.transform=`rotate(${angle}rad)`;result.textContent='轉盤正在替你決定…';setTimeout(()=>{const f=foods[chosen];result.innerHTML=`今天吃：<a href="${q(f.address+' '+f.name)}" target="_blank" rel="noopener" style="color:#0e6a58">${f.name}</a><br><small>${f.dish}</small>`;spinning=false;spin.disabled=false},4900)});
+    const map=L.map('map').setView([23.048,120.19],12);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);const bounds=[];
+    async function geocode(f,i){try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=tw&q='+encodeURIComponent(f.address));const d=await r.json();if(!d.length)return;const lat=+d[0].lat,lng=+d[0].lon;bounds.push([lat,lng]);L.marker([lat,lng]).addTo(map).bindPopup(`<b>${i+1}. ${f.name}</b><br>${f.dish}<br><a target="_blank" rel="noopener" href="${q(f.address+' '+f.name)}">開啟導航</a>`);if(bounds.length>1)map.fitBounds(bounds,{padding:[28,28]})}catch(e){console.warn('地圖定位失敗',f.name)}}
+    foods.forEach((f,i)=>setTimeout(()=>geocode(f,i),i*1050));
+  </script>
+</body>
+</html>
